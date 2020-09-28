@@ -1,0 +1,357 @@
+<html>
+
+<head>
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Nunito);
+        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css);
+
+        *,
+        *:before,
+        *:after {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            background: #FFD16E;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+        }
+
+        .uploadWrapper {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .imageUploadForm {
+            background: #6E95F7;
+            height: 400px;
+            width: 500px;
+            position: relative;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: flex-end;
+            align-items: flex-end;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+
+        .imageUploadForm .helpText {
+            color: white;
+            display: block;
+            position: absolute;
+            top: 2%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .imageUploadForm .helpText:after {
+            content: '\f067';
+            font-family: 'FontAwesome';
+            font-size: 150%;
+            color: rgba(255, 255, 255, 0.5);
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            margin: 4% auto auto auto;
+            width: 50%;
+            height: 50%;
+            border: 6px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .imageUploadForm .pickFile {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            display: block;
+            background: white;
+            height: 25%;
+            width: 100%;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-align-items: center;
+            align-items: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+        }
+
+        .imageUploadForm .pickFileButton {
+            display: inline-block;
+            padding: 0.7em 2em;
+            color: white;
+            background: #FB92AE;
+            text-decoration: none;
+        }
+
+        .imageUploadForm .pickFileButton:hover {
+            text-decoration: none;
+        }
+
+        .imageUploadForm .uploadButton {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .imageUploadForm.loading .helpText {
+            font-size: 0;
+            top: 7%;
+        }
+
+        .imageUploadForm.loading .helpText:before {
+            font-size: 30px;
+            content: 'Uploading...';
+        }
+
+        .imageUploadForm.loading .helpText:after {
+            display: none;
+        }
+
+        .imageUploadForm.loading .uploadedImg {
+            position: absolute;
+            bottom: 12.5%;
+            left: 12.5%;
+            width: 75%;
+            height: 65%;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
+            border: 4px solid white;
+            -moz-transition: opacity ease-out;
+            -o-transition: opacity ease-out;
+            -webkit-transition: opacity ease-out;
+            transition: opacity ease-out;
+        }
+
+        .imageUploadForm.loading .unveil {
+            position: absolute;
+            background: #6E95F7;
+            display: block;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            -moz-animation: toTop 4s forwards;
+            -webkit-animation: toTop 4s forwards;
+            animation: toTop 4s forwards;
+        }
+
+        .imageUploadForm.loading .unveil:after {
+            content: '';
+            position: absolute;
+            left: -3%;
+            bottom: 0;
+            height: 10px;
+            width: 106%;
+            background: #FFD16E;
+            border-radius: 5px;
+        }
+
+        .imageUploadForm.loading .pickFile,
+        .imageUploadForm.loading .uploadButton {
+            display: none;
+        }
+
+        .imageUploadForm.loading.loaded {
+            height: 200px;
+        }
+
+        .imageUploadForm.loading.loaded .uploadedImg {
+            opacity: 0;
+        }
+
+        .imageUploadForm.loading.loaded .helpText:before {
+            content: 'Failed to Predict!';
+        }
+
+        .imageUploadForm.loading.loaded.pneumonia .helpText:before {
+            content: 'Pneumonia Detected!';
+        }
+
+        .imageUploadForm.loading.loaded.normal .helpText:before {
+            content: 'Healthy Person!';
+        }
+
+        .imageUploadForm.loading.loaded.pneumonia .helpText:after {
+            content: '\f057';
+        }
+
+        .imageUploadForm.loading.loaded.normal .helpText:after {
+            content: '\f058';
+        }
+
+        .imageUploadForm.loading.loaded .helpText:after {
+            display: block;
+            opacity: 0;
+            font-size: 0;
+            line-height: 100px;
+            -moz-animation: fadeIn 0.4s forwards;
+            -webkit-animation: fadeIn 0.4s forwards;
+            animation: fadeIn 0.4s forwards;
+            content: '\f057';
+            color: white;
+            margin-top: 2%;
+            border-width: 0;
+        }
+
+        @-moz-keyframes toTop {
+            to {
+                height: 0;
+            }
+        }
+
+        @-webkit-keyframes toTop {
+            to {
+                height: 0;
+            }
+        }
+
+        @keyframes toTop {
+            to {
+                height: 0;
+            }
+        }
+
+        @-moz-keyframes fadeIn {
+            to {
+                opacity: 1;
+                font-size: 90px;
+            }
+        }
+
+        @-webkit-keyframes fadeIn {
+            to {
+                opacity: 1;
+                font-size: 90px;
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                font-size: 90px;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <div class="uploadWrapper">
+        <form id="imageUploadForm" class="imageUploadForm">
+            <span class="helpText" id="helpText">Upload an image</span>
+            <input type='file' id="file" class="uploadButton" accept="image/*" />
+            <div id="uploadedImg" class="uploadedImg">
+                <span class="unveil"></span>
+            </div>
+            <span class="pickFile">
+                <a href="#" class="pickFileButton">Pick file</a>
+            </span>
+        </form>
+    </div>
+
+
+</body>
+<script>
+    "use strict";
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            fire_ajax_submit(input.files[0])
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $uploadedImg[0].style.backgroundImage = 'url(' + e.target.result + ')';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function fire_ajax_submit(file) {
+        var fd = new FormData();
+        fd.append("file", file);
+
+        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "https://u7k24dtheg.execute-api.us-east-1.amazonaws.com/prod",
+            data: fd,
+            processData: false, //prevent jQuery from automatically transforming the data into a query string
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+                if (data === 'Pneumonia') {
+                    isNormal = 0;
+                }
+                else if (data === 'Normal') {
+                    isNormal = 1;
+                }
+                console.log("SUCCESS : ", data);
+            },
+            error: function (e) {
+                console.log("ERROR : ", e);
+            }
+        });
+
+    }
+    var $form = $("#imageUploadForm"),
+        $file = $("#file"),
+        $uploadedImg = $("#uploadedImg"),
+        $helpText = $("#helpText"),
+        isNormal = -1
+        ;
+    $file.on('change', function () {
+        readURL(this);
+        $form.addClass('loading');
+    });
+    $uploadedImg.on('webkitAnimationEnd MSAnimationEnd oAnimationEnd animationend', function () {
+        $form.addClass('loaded');
+        if (isNormal === 0) {
+            $form.addClass('pneumonia');
+        }
+        else if (isNormal === 1) {
+            $form.addClass('normal');
+        }
+    });
+    $helpText.on('webkitAnimationEnd MSAnimationEnd oAnimationEnd animationend', function () {
+        setTimeout(function () {
+            $file.val(''); $form.removeClass('loading').removeClass('loaded');
+            if (isNormal === 0) {
+                $form.removeClass('pneumonia');
+            }
+            else if (isNormal === 1) {
+                $form.removeClass('normal');
+            }
+            isNormal = -1
+        }, 5000);
+    });
+</script>
+
+</html>
